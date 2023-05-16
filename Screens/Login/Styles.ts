@@ -30,6 +30,9 @@ const styles = StyleSheet.create({
   },
   formInputContainer: {
     marginBottom: 70,
+    ...StyleSheet.absoluteFillObject,
+    zIndex: -1,
+    justifyContent: "center",
   },
   textInput: {
     height: 50,
@@ -75,6 +78,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     alignItems: "center",
     borderRadius: 20,
+    top: -20,
   },
 });
 
