@@ -3,6 +3,7 @@ import {
   StyleSheet,
   Text,
   View,
+  SafeAreaView,
   Dimensions,
   TextInput,
   Pressable,
@@ -21,7 +22,7 @@ import styles from "./Styles";
 
 const { height, width } = Dimensions.get("window");
 
-export default function Login() {
+export default function Login({ navigation }: any) {
   const imagePosition = useSharedValue(1);
   const formButtonScale = useSharedValue(1);
   const [isRegistering, setIsRegistering] = useState(false);
@@ -88,7 +89,7 @@ export default function Login() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Animated.View style={[StyleSheet.absoluteFill, imageAnimatedStyle]}>
         <Svg height={height + 100} width={width}>
           <ClipPath id="loginClipPath">
@@ -146,13 +147,16 @@ export default function Login() {
             }
           >
             <Animated.View style={[styles.formButton, formButtonAnimatedStyle]}>
-              <Text style={styles.buttonText}>
+              <Text
+                style={styles.buttonText}
+                onPress={() => navigation.navigate("Home", { screen: "Home" })}
+              >
                 {isRegistering ? "REGISTER" : "LOG IN"}
               </Text>
             </Animated.View>
           </Pressable>
         </Animated.View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }

@@ -29,7 +29,6 @@ const styles = StyleSheet.create({
     height: height / 3,
   },
   formInputContainer: {
-    marginBottom: 70,
     ...StyleSheet.absoluteFillObject,
     zIndex: -1,
     justifyContent: "center",
@@ -50,7 +49,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 35,
     marginHorizontal: 20,
-    marginVertical: 10,
     borderWidth: 1,
     borderColor: "white",
     shadowColor: "#000",
