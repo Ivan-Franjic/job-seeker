@@ -2,7 +2,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import HomeScreen from "../Screens/HomeScreen";
-import Profile from "../Screens/Profile";
+import Profile from "../Screens/Profile/Profile";
 import JobDetails from "../Screens/JobDetails";
 
 const Tab = createBottomTabNavigator();
@@ -53,6 +53,7 @@ export default function Navigation() {
         name="Profile"
         component={Profile}
         options={{
+          headerShown: false,
           tabBarLabel: "Profile",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person-circle" color={color} size={size} />
