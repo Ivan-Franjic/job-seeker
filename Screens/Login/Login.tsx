@@ -111,7 +111,7 @@ export default function Login({ navigation }: any) {
         return;
       } else {
         const registeredResponse = await fetch(
-          "http://192.168.1.6:5000/auth/register",
+          "http://localhost:5000/auth/register",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -135,7 +135,7 @@ export default function Login({ navigation }: any) {
         return;
       } else {
         const loggedInResponse = await fetch(
-          "http://192.168.1.6:5000/auth/login",
+          "http://localhost:5000/auth/login",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
