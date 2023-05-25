@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -17,20 +17,35 @@ import Animated, {
   withDelay,
   withSequence,
   withSpring,
+  Value,
 } from "react-native-reanimated";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { useDispatch } from "react-redux";
+import { setLogin } from "../../State";
 import styles from "./Styles";
 
 const { height, width } = Dimensions.get("window");
 
 export default function Login({ navigation }: any) {
+  const dispatch = useDispatch();
   const imagePosition = useSharedValue(1);
   const formButtonScale = useSharedValue(1);
   const [isRegistering, setIsRegistering] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  let test: number;
+  if (isRegistering) {
+    test = 1.5;
+  } else {
+    test = 2;
+  }
+
   const imageAnimatedStyle = useAnimatedStyle(() => {
     const interpolation = interpolate(
       imagePosition.value,
       [0, 1],
-      [-height / 2, 0]
+      [-height / test, 0]
     );
     return {
       transform: [
@@ -88,6 +103,54 @@ export default function Login({ navigation }: any) {
     }
   };
 
+  const handleSubmit = async () => {
+    formButtonScale.value = withSequence(withSpring(1.5), withSpring(1));
+    if (isRegistering) {
+      if (name === "" || email === "" || password === "") {
+        alert("All fields are required!");
+        return;
+      } else {
+        const registeredResponse = await fetch(
+          "http://192.168.1.6:5000/auth/register",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name: name,
+              email: email,
+              password: password,
+            }),
+          }
+        );
+        const isRegistered = await registeredResponse.json();
+        console.log(isRegistered);
+        if (isRegistered) {
+          dispatch(setLogin({ user: isRegistered.user }));
+          navigation.navigate("Navigation");
+        }
+      }
+    } else {
+      if (email === "" || password === "") {
+        alert("All fields are required!");
+        return;
+      } else {
+        const loggedInResponse = await fetch(
+          "http://192.168.1.6:5000/auth/login",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: email, password: password }),
+          }
+        );
+        const isLoggedIn = await loggedInResponse.json();
+        if (isLoggedIn) {
+          dispatch(setLogin({ user: isLoggedIn.user }));
+          navigation.navigate("Navigation");
+        }
+      }
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <Animated.View style={[StyleSheet.absoluteFill, imageAnimatedStyle]}>
@@ -125,32 +188,32 @@ export default function Login({ navigation }: any) {
             placeholder="Email"
             placeholderTextColor="black"
             style={styles.textInput}
+            value={email}
+            onChangeText={(text) => setEmail(text)}
+            autoComplete="email"
+            keyboardType="email-address"
           />
           {isRegistering && (
             <TextInput
               placeholder="Full name"
               placeholderTextColor="black"
               style={styles.textInput}
+              value={name}
+              onChangeText={(text) => setName(text)}
             />
           )}
           <TextInput
             placeholder="Password"
             placeholderTextColor="black"
             style={styles.textInput}
+            value={password}
+            onChangeText={(text) => setPassword(text)}
+            secureTextEntry={true}
+            autoComplete="password"
           />
-          <Pressable
-            onPress={() =>
-              (formButtonScale.value = withSequence(
-                withSpring(1.5),
-                withSpring(1)
-              ))
-            }
-          >
+          <Pressable onPress={handleSubmit}>
             <Animated.View style={[styles.formButton, formButtonAnimatedStyle]}>
-              <Text
-                style={styles.buttonText}
-                onPress={() => navigation.navigate("Home", { screen: "Home" })}
-              >
+              <Text style={styles.buttonText}>
                 {isRegistering ? "REGISTER" : "LOG IN"}
               </Text>
             </Animated.View>
