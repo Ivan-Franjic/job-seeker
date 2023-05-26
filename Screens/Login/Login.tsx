@@ -22,6 +22,7 @@ import Animated, {
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useDispatch } from "react-redux";
 import { setLogin } from "../../State";
+import axios from "axios";
 import styles from "./Styles";
 
 const { height, width } = Dimensions.get("window");
@@ -103,49 +104,59 @@ export default function Login({ navigation }: any) {
     }
   };
 
-  const handleSubmit = async () => {
-    formButtonScale.value = withSequence(withSpring(1.5), withSpring(1));
+  const validation = () => {
+    let mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (isRegistering) {
       if (name === "" || email === "" || password === "") {
-        alert("All fields are required!");
-        return;
+        return alert("All fields are required!");
+      }
+      if (password.length < 7) {
+        return alert("Password is too short!");
+      }
+      if (email.match(mailformat)) {
+        return true;
       } else {
-        const registeredResponse = await fetch(
-          "http://localhost:5000/auth/register",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              name: name,
-              email: email,
-              password: password,
-            }),
-          }
-        );
-        const isRegistered = await registeredResponse.json();
-        console.log(isRegistered);
-        if (isRegistered) {
-          dispatch(setLogin({ user: isRegistered.user }));
-          navigation.navigate("Navigation");
-        }
+        return alert("Invalid email address!");
       }
     } else {
       if (email === "" || password === "") {
-        alert("All fields are required!");
-        return;
+        return alert("All fields are required!");
+      }
+      if (email.match(mailformat)) {
+        return true;
       } else {
-        const loggedInResponse = await fetch(
-          "http://localhost:5000/auth/login",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email: email, password: password }),
-          }
-        );
-        const isLoggedIn = await loggedInResponse.json();
-        if (isLoggedIn) {
-          dispatch(setLogin({ user: isLoggedIn.user }));
-          navigation.navigate("Navigation");
+        return alert("Invalid email address!");
+      }
+    }
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    formButtonScale.value = withSequence(withSpring(1.5), withSpring(1));
+    if (isRegistering) {
+      if (validation()) {
+        try {
+          await axios.post("http://192.168.1.6:5000/auth/register", {
+            name,
+            email,
+            password,
+          });
+          loginHandler();
+        } catch (error: any) {
+          alert(error.response.data);
+        }
+      }
+    } else {
+      if (validation()) {
+        try {
+          const loggedInResponse = await axios.post(
+            "http://192.168.1.6:5000/auth/login",
+            { email, password }
+          );
+          dispatch(setLogin({ user: loggedInResponse.data }));
+          navigation.navigate("Home");
+        } catch (error: any) {
+          alert(error.response.data);
         }
       }
     }
@@ -190,6 +201,7 @@ export default function Login({ navigation }: any) {
             style={styles.textInput}
             value={email}
             onChangeText={(text) => setEmail(text)}
+            autoCapitalize="none"
             autoComplete="email"
             keyboardType="email-address"
           />
@@ -209,6 +221,7 @@ export default function Login({ navigation }: any) {
             value={password}
             onChangeText={(text) => setPassword(text)}
             secureTextEntry={true}
+            autoCapitalize="none"
             autoComplete="password"
           />
           <Pressable onPress={handleSubmit}>
