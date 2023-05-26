@@ -1,10 +1,8 @@
-import { AppRegistry } from "react-native";
 import React from "react";
-import { expo as appName } from "./app.json";
 import authReducer from "./State";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
-import Index from "./index";
+import Navigator from "./Components/Navigation/Navigator";
 
 const store = configureStore({
   reducer: {
@@ -12,10 +10,12 @@ const store = configureStore({
   },
 });
 
+export type RootState = ReturnType<typeof store.getState>;
+
 function App() {
   return (
     <Provider store={store}>
-      <Index />
+      <Navigator />
     </Provider>
   );
 }
