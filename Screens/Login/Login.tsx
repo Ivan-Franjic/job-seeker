@@ -24,6 +24,7 @@ import { useDispatch } from "react-redux";
 import { setLogin } from "../../State";
 import axios from "axios";
 import styles from "./Styles";
+import DatePicker from "react-native-date-picker";
 
 const { height, width } = Dimensions.get("window");
 
@@ -35,6 +36,7 @@ export default function Login({ navigation }: any) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [date, setDate] = useState(new Date());
   let test: number;
   if (isRegistering) {
     test = 1.5;
@@ -206,13 +208,20 @@ export default function Login({ navigation }: any) {
             keyboardType="email-address"
           />
           {isRegistering && (
-            <TextInput
-              placeholder="Full name"
-              placeholderTextColor="black"
-              style={styles.textInput}
-              value={name}
-              onChangeText={(text) => setName(text)}
-            />
+            <>
+              <TextInput
+                placeholder="Full name"
+                placeholderTextColor="black"
+                style={styles.textInput}
+                value={name}
+                onChangeText={(text) => setName(text)}
+              />
+              <DatePicker
+                style={styles.textInput}
+                date={date}
+                onDateChange={setDate}
+              />
+            </>
           )}
           <TextInput
             placeholder="Password"

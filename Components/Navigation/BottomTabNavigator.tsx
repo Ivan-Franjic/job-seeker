@@ -1,6 +1,6 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import HomeScreen from "../../Screens/HomeScreen";
+import Home from "../../Screens/Home/Home";
 import JobDetails from "../../Screens/JobDetails";
 import ProfileNavigator from "./ProfileNavigator";
 
@@ -10,7 +10,7 @@ export default function BottomTabNavigator() {
     <Tab.Navigator>
       <Tab.Screen
         name="Jobs"
-        component={HomeScreen}
+        component={Home}
         options={{
           tabBarLabel: "Home",
           tabBarIcon: ({ color, size }) => (
